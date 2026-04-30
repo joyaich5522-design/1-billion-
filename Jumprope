@@ -1,0 +1,88 @@
+local TweenService = game:GetService("TweenService")
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- Create the GUI
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+ScreenGui.Name = "OpScriptSystem"
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 300, 0, 150)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+
+local Corner = Instance.new("UICorner", MainFrame)
+Corner.CornerRadius = UDim.new(0, 10)
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Text = "Op Script"
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+
+local KeyInput = Instance.new("TextBox", MainFrame)
+KeyInput.PlaceholderText = "Enter Key..."
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.4, 0)
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.Text = ""
+
+local InputCorner = Instance.new("UICorner", KeyInput)
+
+local Submit = Instance.new("TextButton", MainFrame)
+Submit.Text = "Verify"
+Submit.Size = UDim2.new(0.5, 0, 0, 30)
+Submit.Position = UDim2.new(0.25, 0, 0.75, 0)
+Submit.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+Submit.TextColor3 = Color3.new(1, 1, 1)
+
+local SubmitCorner = Instance.new("UICorner", Submit)
+
+-- SET YOUR KEY HERE
+local CorrectKey = "RoyAichV3" 
+
+-- Function for your actual script
+local function LoadMainScript()
+    workspace.Spin_Rope:Destroy()
+    getgenv().Running = true
+    while getgenv().Running and task.wait(0.1) do
+        local args = {[1] = game:GetService("Players").LocalPlayer}
+        game:GetService("ReplicatedStorage").Spin_Remotes.QuartoPremio:FireServer(unpack(args))
+    end
+end
+
+-- ANIMATIONS
+Submit.MouseButton1Click:Connect(function()
+    if KeyInput.Text == CorrectKey then
+        -- HAPPY JUMP & FLY AWAY
+        local jump = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {Position = UDim2.new(0.5, -150, 0.4, -75)})
+        local flyAway = TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {Position = UDim2.new(0.5, -150, -0.5, 0)})
+        
+        jump:Play()
+        jump.Completed:Wait()
+        flyAway:Play()
+        flyAway.Completed:Wait()
+        
+        ScreenGui:Destroy()
+        LoadMainScript() -- Runs your script
+    else
+        -- SHAKE ANIMATION
+        local originalPos = MainFrame.Position
+        for i = 1, 5 do
+            MainFrame.Position = originalPos + UDim2.new(0, math.random(-5, 5), 0, 0)
+            task.wait(0.02)
+        end
+        MainFrame.Position = originalPos
+        KeyInput.Text = ""
+        KeyInput.PlaceholderText = "WRONG KEY!"
+        task.wait(1)
+        KeyInput.PlaceholderText = "Enter Key..."
+    end
+end)
+
