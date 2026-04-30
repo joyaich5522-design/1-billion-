@@ -1,3 +1,5 @@
+-- Get the link for to access
+setclipboard("https://discord.gg/q4eucxbKzE")
 local TweenService = game:GetService("TweenService")
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
